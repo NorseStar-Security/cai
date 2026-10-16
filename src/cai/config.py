@@ -220,7 +220,7 @@ class CAIConfig:
             debug=int(os.getenv("CAI_DEBUG", "1")),
             debug_pricing=os.getenv("CAI_DEBUG_PRICING", "0") == "1",
             tracing=_parse_bool(os.getenv("CAI_TRACING", "true")),
-            telemetry=os.getenv("CAI_TELEMETRY", "true").lower() != "false",
+            telemetry=False,
             guardrails=_parse_bool(os.getenv("CAI_GUARDRAILS", "false")),
             tool_timeout=int(os.getenv("CAI_TOOL_TIMEOUT", "120")),
             tui_enabled=_parse_bool(os.getenv("CAI_TUI", "true")),

@@ -86,59 +86,7 @@ class BackendSpanExporter(TracingExporter):
         return self._project or os.environ.get("OPENAI_PROJECT_ID")
 
     def export(self, items: list[Trace | Span[Any]]) -> None:
-        if not items:
-            return
-
-        if not self.api_key:
-            logger.warning("OPENAI_API_KEY is not set, skipping trace export")
-            return
-
-        data = [item.export() for item in items if item.export()]
-        payload = {"data": data}
-
-        headers = {
-            "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json",
-            "OpenAI-Beta": "traces=v1",
-        }
-
-        # Exponential backoff loop
-        attempt = 0
-        delay = self.base_delay
-        while True:
-            attempt += 1
-            try:
-                response = self._client.post(url=self.endpoint, headers=headers, json=payload)
-
-                # If the response is successful, break out of the loop
-                if response.status_code < 300:
-                    logger.debug(f"Exported {len(items)} items")
-                    return
-
-                # If the response is a client error (4xx), we wont retry
-                if 400 <= response.status_code < 500:
-                    logger.error(
-                        f"[non-fatal] Tracing client error {response.status_code}: {response.text}"
-                    )
-                    return
-
-                # For 5xx or other unexpected codes, treat it as transient and retry
-                logger.warning(
-                    f"[non-fatal] Tracing: server error {response.status_code}, retrying."
-                )
-            except httpx.RequestError as exc:
-                # Network or other I/O error, we'll retry
-                logger.warning(f"[non-fatal] Tracing: request failed: {exc}")
-
-            # If we reach here, we need to retry or give up
-            if attempt >= self.max_retries:
-                logger.error("[non-fatal] Tracing: max retries reached, giving up on this batch.")
-                return
-
-            # Exponential backoff + jitter
-            sleep_time = delay + random.uniform(0, 0.1 * delay)  # 10% jitter
-            time.sleep(sleep_time)
-            delay = min(delay * 2, self.max_delay)
+        return None  # NorseStar: disabled (no data leaves this host)
 
     def close(self):
         """Close the underlying HTTP client."""

@@ -160,7 +160,7 @@ def main():
         boot.update(
             f"Verifying license and API key ({mask_key_for_hint(os.getenv('ALIAS_API_KEY', ''))})..."
         )
-        skip_updates = os.getenv("CAI_SKIP_UPDATE_CHECK", "").lower() in ("1", "true", "yes")
+        skip_updates = os.getenv("CAI_SKIP_UPDATE_CHECK", "1").lower() in ("1", "true", "yes")
         def _run_check_for_updates() -> None:
             try:
                 update_holder["info"] = check_for_updates()
